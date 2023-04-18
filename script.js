@@ -26,13 +26,6 @@ iniciarSesion.addEventListener("click", () => {
 let usuarioBD = "juani"
 let contraseniaBD = "juani123"
 
-iniciarSesion.addEventListener("click", () => {
-    if (usuario.value == usuarioBD && contrasenia.value == contraseniaBD) {
-        alert("bienvenido")
-    } else {
-        alert("datos incorrectos")
-    }
-})
 
 
 //productos
@@ -232,9 +225,9 @@ function vaciarCarrito(e){
   //vaciar el carrito
   carrito = []
   // Actualizar el número de elementos en el carrito
-  // Mostrar una alerta
-  alert("¡Gracias por su compra!");
+  
 }
-document.getElementById("finalizar-compra").addEventListener("click", function() {
+document.getElementById("finalizarCompra").addEventListener("click", function () {
   vaciarCarrito();
+  alert("¡Gracias por su compra!");
 });
