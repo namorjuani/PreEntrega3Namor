@@ -12,13 +12,23 @@ if(localStorage.getItem("usuario") && localStorage.getItem("contrasenia")) {
 
 iniciarSesion.addEventListener("click", () => {
   if (usuario.value == usuarioBD && contrasenia.value == contraseniaBD) {
-    alert("bienvenido");
+    Swal.fire({
+      icon: 'success',
+      title: 'Bienvenido',
+      showConfirmButton: false,
+      timer: 1500
+    });;
 
     // Guardar los datos del usuario en el almacenamiento local como JSON
     localStorage.setItem("usuario", JSON.stringify(usuario.value));
     localStorage.setItem("contrasenia", JSON.stringify(contrasenia.value));
   } else {
-    alert("datos incorrectos");
+    Swal.fire({
+      icon: 'error',
+      title: 'Datos incorrectos',
+      showConfirmButton: false,
+      timer: 1500
+    });
   }
 });
 
@@ -27,82 +37,15 @@ let usuarioBD = "juani"
 let contraseniaBD = "juani123"
 
 
-
-//productos
-let productos = [
-    {
-        id: 1,
-        nombre: "cera para autos",
-        categoria: "cosmetica", 
-        precio: 500,
-        img: "https://www.revigal.com.ar/wp-content/uploads/2015/04/CERA-AUTOBRILLO-800X800-1.jpg",
-        stock: 15
-
-    },
-    {
-        id: 2, 
-        nombre: "shampoo para autos", 
-        categoria: "cosmetica", 
-        precio: 800,
-        img: "https://www.fullcarweb.com.ar/wp-content/uploads/2019/01/Lava-Autos-Espuma-Actibril-Color-x-5-L.jpg",
-        stock: 20
-
-    },
-    {
-        id: 3, 
-        nombre: "máquina de lavado de autos", 
-        categoria: "maquinas", 
-        precio: 150000,
-        img: "https://m.media-amazon.com/images/I/71b+ag+IH9L.jpg",
-        stock: 3
-    },
-    {
-        id: 4, 
-        nombre: "lanza para máquina de lavado", 
-        categoria: "maquinas", 
-        precio: 10000,
-        img: "https://http2.mlstatic.com/D_NQ_NP_903376-MLA31022209149_062019-O.webp",
-        stock: 7
-
-
-
-
-    },
-    {
-        id: 5, 
-        nombre: "máquina de espuma", 
-        categoria: "maquinas", 
-        precio: 50000,
-        img: "https://m.media-amazon.com/images/I/81ZjC95iRHL._AC_SL1500_.jpg",
-        stock: 4
-
-
-
-
-    },
-    {
-        id: 6, 
-        nombre: "escobilla", 
-        categoria: "autopartes", 
-        precio: 3000,
-        img: "https://www.boutiqueautomovil.com.ar/wp-content/uploads/2017/01/ESCOBILLAS-BOSCH-AEROFIT.jpg",
-        stock: 25
-
-    },
-    {
-        id: 7, 
-        nombre: "cubre volante", 
-        categoria: "autopartes", 
-        precio: 2500,
-        img: "https://d3ugyf2ht6aenh.cloudfront.net/stores/001/621/239/products/2021_tn-qkl_ao90011-17c84dd810aecbeaa316170478342304-640-0.jpg",
-        stock: 4
-
-
-    },
-];
-
 let contenedorProductos = document.getElementById("contenedorProductos")
-renderizarTarjetas(productos)
+//Renderizo las tarjetas de los productos por medio de JSON
+fetch('productos.json')
+  .then(response => response.json())
+  .then(data => {
+    // Aquí puedes manipular los datos recibidos del archivo JSON
+    productos = data; // Asignamos los datos del JSON a la variable productos
+    renderizarTarjetas(productos); // Volvemos a renderizar las tarjetas con los nuevos datos
+  })
 
 let buscador = document.getElementById("buscador")
 buscador.addEventListener("input", filtrarPorNombre)
@@ -161,9 +104,9 @@ function agregarAlCarrito(producto) {
     carrito.push(producto);
     total += producto.precio;
     producto.stock--;
-    alert(`El producto ${producto.nombre} ha sido agregado al carrito.`);
+    Swal.fire(`El producto ${producto.nombre} ha sido agregado al carrito.`);
   } else {
-    alert(`Lo siento, el producto ${producto.nombre} está agotado.`);
+    Swal.fire(`Lo siento, el producto ${producto.nombre} está agotado.`);
   }
 }
 
@@ -216,18 +159,36 @@ function renderizarTarjetas(arrayDeProductos) {
     contenedorProductos.appendChild(tarjeta);
   });
 }
+//Funcion vaciar carrito
+let vaciarCarrito = document.getElementById("finalizarCompra")
+carrito = [],
 
-//finalizar compra
-let pagarAhora = document.getElementById("finalizarCompra")
-pagarAhora.addEventListener("click", vaciarCarrito)
+vaciarCarrito.addEventListener('click', () => {
+    carrito.length = 0
+})
 
-function vaciarCarrito(e){
-  //vaciar el carrito
-  carrito = []
-  // Actualizar el número de elementos en el carrito
-  
-}
+//Agrego unos sweet alert para finalizar la compra con un procesando seguido de un exito y vaciando el carrito.
 document.getElementById("finalizarCompra").addEventListener("click", function () {
-  vaciarCarrito();
-  alert("¡Gracias por su compra!");
+  Swal.fire({
+    title: 'Procesando...',
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    timer: 2000 // Simulamos un retraso de 2 segundos
+  });
+
+  setTimeout(function () {
+    Swal.close(); // Cerrar el mensaje de "Procesando..."
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: '¡Gracias por su compra!',
+      showConfirmButton: false,
+      timer: 1500
+    });
+    
+    setTimeout(function () {
+      carrito.length = 0; // Vaciar el carrito
+      renderizarCarrito(); // Renderizar el carrito vacío
+    }, 1500); // Esperar 1.5 segundos antes de vaciar y renderizar el carrito
+  }, 2000); // Esperar 2 segundos antes de mostrar el Sweet Alert
 });
